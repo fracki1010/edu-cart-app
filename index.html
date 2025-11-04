@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu Cart</title>
+
+    <script>
+      // Script para prevenir el destello de tema (Flash of Unstyled Content - FOUC)
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+
+        // La clase 'dark' se aplica a <html> por defecto en Tailwind.
+        // Si el tema guardado es 'dark', o es 'system' y el sistema es oscuro, aplica la clase.
+        if (savedTheme === "dark" || (savedTheme === "system" && prefersDark) || (!savedTheme && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+    </head>
+  <body> 
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
