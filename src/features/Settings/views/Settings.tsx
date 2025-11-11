@@ -1,10 +1,14 @@
 import React from "react";
 // Importa tu hook tipificado
 import { useTheme } from "./../hooks/useTheme";
+import { FiLogIn } from "react-icons/fi";
+import { useAuth } from "../../Auth/hooks/useAuth";
 
 export const Setting: React.FC = () => {
   // Uso del hook: las variables ya están tipificadas por 'useTheme.ts'
   const [currentTheme, setCurrentTheme] = useTheme();
+
+  const { logoutUser } = useAuth();
 
   // Tipificación del manejador de eventos para un <select>
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -21,9 +25,7 @@ export const Setting: React.FC = () => {
           Configurá las preferencias de tu aplicación aquí.
         </p>
 
-        <div
-          className="rounded-2xl border bg-white p-4 shadow-sm space-y-3 dark:border-neutral-700 dark:bg-neutral-800 dark:shadow-xl"
-        >
+        <div className="rounded-2xl border bg-white p-4 shadow-sm space-y-3 dark:border-neutral-700 dark:bg-neutral-800 dark:shadow-xl">
           <div>
             <label className="block text-sm font-medium">Tema</label>
             <select
@@ -52,6 +54,17 @@ export const Setting: React.FC = () => {
           <div className="text-xs text-gray-500 dark:text-gray-400">
             (Este formulario es ilustrativo; aquí podés persistir preferencias
             en tu store o backend.)
+          </div>
+
+          <div className="pt-10">
+            
+            <button
+              className="bg-red-500 border text-gray-50 dark:text-gray-950 border-gray-800 dark:border-gray-500 rounded-xl flex items-center px-4 py-2 hover:bg-red-900"
+              onClick={() => logoutUser()}
+            >
+              Cerrar Sesion
+              <FiLogIn />
+            </button>
           </div>
         </div>
       </div>

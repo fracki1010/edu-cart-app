@@ -14,15 +14,15 @@ const features: Feature[] = [
     id: 1,
     title: "Study Materials",
     description: "Essential books and resources for your learning journey",
-    image: "https://via.placeholder.com/640x360?text=Study+Materials",
-    link: "https://huggingface.co/products.html",
+    image: "https://images.pexels.com/photos/5185074/pexels-photo-5185074.jpeg",
+    link: "https://images.pexels.com/photos/5185074/pexels-photo-5185074.jpeg",
     linkText: "Browse Collection",
   },
   {
     id: 2,
     title: "Tech Tools",
     description: "Devices to enhance your learning experience",
-    image: "https://via.placeholder.com/640x360?text=Tech+Tools",
+    image: "https://images.pexels.com/photos/6968105/pexels-photo-6968105.jpeg",
     link: "https://huggingface.co/products.html",
     linkText: "Explore Gadgets",
   },
@@ -30,7 +30,7 @@ const features: Feature[] = [
     id: 3,
     title: "Workspace Setup",
     description: "Everything you need for a productive study space",
-    image: "https://via.placeholder.com/640x360?text=Workspace+Setup",
+    image: "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg",
     link: "https://huggingface.co/products.html",
     linkText: "View Options",
   },
@@ -52,7 +52,7 @@ export const HomePage: React.FC = () => {
         {features.map((feature) => (
           <div
             key={feature.id}
-            className="bg-white dark:bg-neutral-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 transition-colors"
+            className="bg-white dark:bg-neutral-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105"
           >
             <img
               src={feature.image}

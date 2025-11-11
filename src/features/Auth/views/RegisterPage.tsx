@@ -1,17 +1,19 @@
 import { AuthForm } from "../../../components/ui/AuthForm";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/authSlice";
-import { Link } from "react-router";
-import type { AppDispatch } from "../../../store/store";
+
+import { Link, useNavigate } from "react-router";
+
+import { useAuth } from "../hooks/useAuth";
 
 export const RegisterPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { register, isAuthenticated } = useAuth();
+  const navigate = useNavigate()
 
   const handleRegister = async (data: Record<string, string>) => {
-    await new Promise((r) => setTimeout(r, 1000));
-    dispatch(
-      loginSuccess({ user: { email: data.email, name: data.name }, token: "fakeToken" })
-    );
+    await register(data.username, data.email, data.password, data.name);
+    
+    if (isAuthenticated){
+      navigate('./home')
+    }
   };
 
   return (
@@ -21,6 +23,7 @@ export const RegisterPage = () => {
         submitLabel="Crear cuenta"
         fields={[
           { name: "name", label: "Nombre completo" },
+          {name: "username", label: "Nombre de usuario"},
           { name: "email", label: "Correo electrónico", type: "email" },
           { name: "password", label: "Contraseña", type: "password" },
         ]}

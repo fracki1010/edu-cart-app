@@ -1,46 +1,68 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import type { ICart, ICartItem } from "../types/Cart";
+import { removeItemFromCart } from "../services/apiCart";
 
 interface CartState {
-  items: CartItem[];
+  cartId: number;
+  items: ICartItem[];
   total: number;
+  loading: boolean;
+  error: string | null;
+  alert: string | null;
 }
 
 const initialState: CartState = {
+  cartId: 0,
   items: [],
   total: 0,
+  loading: false,
+  error: null,
+  alert: null,
 };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addItem: (state, action: PayloadAction<CartItem>) => {
-      const existing = state.items.find((i) => i.id === action.payload.id);
-      if (existing) {
-        existing.quantity += action.payload.quantity;
-      } else {
-        state.items.push(action.payload);
-      }
-      state.total = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    cartStart: (state) => {
+      state.loading = true;
+      state.error = null;
     },
-    removeItem: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((i) => i.id !== action.payload);
-      state.total = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    cartSuccess: (state, action: PayloadAction<ICart>) => {
+      state.loading = false;
+      state.items = action.payload.items;
+      state.total = action.payload.total;
+      state.cartId = action.payload.id;
     },
-    clearCart: (state) => {
+    cartFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    clearCartState: (state) => {
       state.items = [];
       state.total = 0;
+    },
+    cartRemoveItem: (state, actions: PayloadAction<number>) => {
+      console.log("llega");
+
+      const productIdToRemove = actions.payload;
+      state.items = state.items.filter(
+        (item) => item.productId !== productIdToRemove
+      );
+    },
+    setAlert: (state, action: PayloadAction<string | null>) => {
+      state.alert = action.payload;
     },
   },
 });
 
-export const { addItem, removeItem, clearCart } = cartSlice.actions;
+export const {
+  cartStart,
+  cartSuccess,
+  cartFailure,
+  clearCartState,
+  cartRemoveItem,
+  setAlert,
+} = cartSlice.actions;
 export default cartSlice.reducer;

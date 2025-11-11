@@ -1,38 +1,39 @@
 import { AuthForm } from "../../../components/ui/AuthForm";
-import { useDispatch } from "react-redux";
-import {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-} from "../redux/authSlice";
-import { Link } from "react-router";
-import type { AppDispatch } from "../../../store/store"; // Asegurate de exportar el tipo en tu store
+import { useEffect } from "react";
+import { useNavigate, Link } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import { LoadingComponent } from "../../../components/layout/LoadingComponent";
 
 export const LoginPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { login, loading, error, token } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) navigate("/home", { replace: true });
+  }, [token, navigate]);
 
   const handleLogin = async (data: Record<string, string>) => {
-    try {
-      dispatch(loginStart());
-      await new Promise((r) => setTimeout(r, 1000)); // Simulación
-      dispatch(
-        loginSuccess({ user: { email: data.email }, token: "fakeToken" })
-      );
-    } catch (err) {
-      dispatch(loginFailure("Error al iniciar sesión"));
-    }
+    await login(data.username, data.password);
   };
 
+  if(loading){
+    return <LoadingComponent/>
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-neutral-900">
       <AuthForm
         onSubmit={handleLogin}
-        submitLabel="Iniciar sesión"
+        submitLabel={loading ? "Cargando..." : "Iniciar sesión"}
+        // disabled={loading}
         fields={[
-          { name: "email", label: "Correo electrónico", type: "email" },
+          { name: "username", label: "Nombre de usuario", type: "text" },
           { name: "password", label: "Contraseña", type: "password" },
         ]}
       />
+
+      {error && <p className="mt-4 text-red-600 font-medium">{error}</p>}
+
       <p className="mt-6 text-gray-600">
         ¿No tienes cuenta?{" "}
         <Link to="/register" className="text-indigo-600 font-medium">

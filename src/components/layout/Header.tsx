@@ -52,12 +52,12 @@ export const Header = () => {
         >
           <FiShoppingCart/>
         </Link>
-        <Link
+        {/* <Link
           to="/login"
           className="flex items-center gap-1 text-white hover:bg-white/10 rounded px-3 py-3 transition"
         >
           <FiLogIn/>
-        </Link>
+        </Link> */}
         <Link
           to="/settings"
           className="flex items-center gap-1 text-white hover:bg-white/10 rounded px-3 py-3 transition"
