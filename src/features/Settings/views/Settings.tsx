@@ -1,23 +1,19 @@
 import React from "react";
-// Importa tu hook tipificado
 import { useTheme } from "./../hooks/useTheme";
 import { FiLogIn } from "react-icons/fi";
 import { useAuth } from "../../Auth/hooks/useAuth";
 
 export const Setting: React.FC = () => {
-  // Uso del hook: las variables ya están tipificadas por 'useTheme.ts'
   const [currentTheme, setCurrentTheme] = useTheme();
 
   const { logoutUser } = useAuth();
 
-  // Tipificación del manejador de eventos para un <select>
+
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    // El valor del evento (event.target.value) se castea a Theme
     setCurrentTheme(event.target.value as "light" | "dark" | "system");
   };
 
   return (
-    // Aplicación de estilos con variantes dark:
     <main className="h-screen p-8 bg-gray-50 text-gray-900 dark:bg-neutral-900 dark:text-gray-100">
       <div className="space-y-4">
         <h1 className="text-2xl font-semibold">Ajustes</h1>
@@ -30,8 +26,8 @@ export const Setting: React.FC = () => {
             <label className="block text-sm font-medium">Tema</label>
             <select
               className="mt-1 h-10 rounded-xl border px-3 text-sm dark:bg-neutral-900 dark:border-neutral-600 dark:text-gray-200"
-              value={currentTheme} // Vinculado al estado
-              onChange={handleThemeChange} // Manejador tipificado
+              value={currentTheme}
+              onChange={handleThemeChange}
             >
               <option value="system">Sistema</option>
               <option value="light">Claro</option>

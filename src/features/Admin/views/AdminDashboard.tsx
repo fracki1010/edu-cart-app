@@ -9,7 +9,6 @@ import {
 } from "react-icons/fa6";
 import { Link } from "react-router";
 
-// Hooks de datos
 import { useProducts } from "../../Products/hooks/useProducts";
 import { useAdminOrders } from "../hook/useAdminOrders";
 import { LowStockTable } from "../components/LowStockTable";
@@ -17,36 +16,32 @@ import { LowStockTable } from "../components/LowStockTable";
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export const AdminDashboard = () => {
-    // 1. OBTENER DATOS REALES DE TODA LA APP
     const { data: products = [], isLoading: loadingProducts } = useProducts({});
     const { data: orders = [], isLoading: loadingOrders } = useAdminOrders();
 
 
-
     const isLoading = loadingProducts || loadingOrders;
 
-    // 2. PROCESAMIENTO DE DATOS (LA MAGIA ✨)
     const dashboardData = useMemo(() => {
         if (isLoading) return null;
 
-        // --- KPI 1: Ventas Totales ---
+        // KPI 1: Ventas Totales
         const totalSales = orders.reduce((sum: any, order: { total: any; }) => sum + order.total, 0);
 
-        // --- KPI 2: Órdenes Pendientes ---
+        // KPI 2: Órdenes Pendientes
         const pendingOrders = orders.filter((o: { status: string; }) => o.status === 'Pending').length;
 
-        // --- KPI 3: Stock Bajo ---
+        // KPI 3: Stock Bajo
         const lowStockCount = products.filter(p => p.stock <= p.stock_min).length;
 
-        // --- KPI 4: Valor Inventario ---
+        // KPI 4: Valor Inventario
         const inventoryVal = products.reduce((acc, p) => acc + (p.price * p.stock), 0);
 
-        // --- GRÁFICO 1: TOP 5 PRODUCTOS VENDIDOS ---
+        // GRÁFICO 1: TOP 5 PRODUCTOS VENDIDOS
         // Mapa para sumar cantidades por nombre de producto
         const productSalesMap: Record<string, number> = {};
         orders.forEach((order: { items: any[]; }) => {
             order.items.forEach((item: { product: { name: any; }; quantity: number; }) => {
-                // Usamos el nombre del producto (o ID si prefieres)
                 const name = item.product.name;
                 productSalesMap[name] = (productSalesMap[name] || 0) + item.quantity;
             });
@@ -58,7 +53,8 @@ export const AdminDashboard = () => {
             .sort((a, b) => b.sales - a.sales)
             .slice(0, 5);
 
-        // --- GRÁFICO 2: DISTRIBUCIÓN POR CATEGORÍA ---
+
+        // GRÁFICO 2: DISTRIBUCIÓN POR CATEGORÍA
         const categoryMap: Record<string, number> = {};
         products.forEach(p => {
             const catName = p.category || "Sin Categoría";
@@ -130,7 +126,7 @@ export const AdminDashboard = () => {
                 </Button>
             </div>
 
-            {/* 1. SECCIÓN DE KPIS REALES */}
+            {/* SECCIÓN DE KPIS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {KPIS.map((kpi, idx) => (
                     <Card key={idx} className="shadow-sm border border-gray-100 dark:border-neutral-800">
@@ -149,7 +145,7 @@ export const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
 
-                {/* 2. GRÁFICO REAL: TOP PRODUCTOS */}
+                {/* GRÁFICO TOP PRODUCTOS */}
                 <Card className="p-4 shadow-sm">
                     <h3 className="text-lg font-bold mb-4 px-2">Top Productos Más Vendidos</h3>
                     <div className="h-[300px] w-full">
@@ -172,7 +168,7 @@ export const AdminDashboard = () => {
                     </div>
                 </Card>
 
-                {/* 3. GRÁFICO REAL: DISTRIBUCIÓN */}
+                {/* GRÁFICO DISTRIBUCIÓN */}
                 <Card className="p-4 shadow-sm">
                     <h3 className="text-lg font-bold mb-4 px-2">Distribución por Categoría</h3>
                     <div className="h-[300px] w-full">
@@ -199,7 +195,7 @@ export const AdminDashboard = () => {
                 </Card>
             </div>
 
-            {/* 4. TABLA DE ALERTAS (YA CONECTADA A REAL) */}
+            {/* TABLA DE ALERTAS */}
             <Card className="shadow-sm">
                 <div className="p-4">
                     <LowStockTable products={products} />

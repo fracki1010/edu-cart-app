@@ -3,17 +3,31 @@ import { useCart } from "../../Cart/hooks/useCart";
 import { useCreateOrder } from "../hook/useOrder";
 import { useNavigate } from "react-router";
 
+const LOCALIDADES = [
+    "Ciudad Autónoma de Buenos Aires",
+    "Gran Buenos Aires (Norte)",
+    "Gran Buenos Aires (Sur)",
+    "Gran Buenos Aires (Oeste)",
+    "Córdoba Capital",
+    "Rosario",
+    "Mendoza",
+    "Otra"
+];
+
 export const CheckoutPage: React.FC = () => {
     const { items, total, fetchCart } = useCart();
     const { mutate: createOrder, isPending, error: mutationError } = useCreateOrder();
+
+    // 1. Nuevo estado para la localidad
+    const [locality, setLocality] = useState("");
     const [address, setAddress] = useState("");
+
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchCart();
     }, [fetchCart]);
 
-    // Redirigir si no hay items
     useEffect(() => {
         if (items.length === 0) {
             navigate("/products");
@@ -22,9 +36,17 @@ export const CheckoutPage: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!address.trim()) return;
 
-        createOrder({ shipping_address: address });
+        // 2. Validación: que ambos campos tengan datos
+        if (!address.trim() || !locality) {
+            alert("Por favor completa la dirección y selecciona una localidad."); // Opcional: Feedback visual simple
+            return;
+        }
+
+        createOrder({
+            shipping_address: address,
+            locality: locality
+        });
     };
 
     const errorMessage = mutationError
@@ -36,6 +58,7 @@ export const CheckoutPage: React.FC = () => {
             <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white">Checkout</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
                 {/* Formulario */}
                 <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-700 h-fit">
                     <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
@@ -43,6 +66,27 @@ export const CheckoutPage: React.FC = () => {
                     </h2>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
+
+                        {/* 4. Nuevo Selector de Localidad */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Localidad / Zona
+                            </label>
+                            <select
+                                required
+                                value={locality}
+                                onChange={(e) => setLocality(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-neutral-900 dark:text-white bg-white"
+                            >
+                                <option value="">Selecciona una opción...</option>
+                                {LOCALIDADES.map((loc) => (
+                                    <option key={loc} value={loc}>
+                                        {loc}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Dirección completa
@@ -51,7 +95,7 @@ export const CheckoutPage: React.FC = () => {
                                 required
                                 rows={3}
                                 className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-neutral-900 dark:text-white"
-                                placeholder="Calle, Número, Depto, Ciudad..."
+                                placeholder="Calle, Número, Depto..."
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                             />
@@ -65,7 +109,8 @@ export const CheckoutPage: React.FC = () => {
 
                         <button
                             type="submit"
-                            disabled={isPending || items.length === 0}
+                            // Deshabilitamos si falta la localidad
+                            disabled={isPending || items.length === 0 || !locality}
                             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? "Procesando..." : `Pagar $${total.toFixed(2)}`}
@@ -73,7 +118,7 @@ export const CheckoutPage: React.FC = () => {
                     </form>
                 </div>
 
-                {/* Resumen Simple */}
+                {/* Resumen (Sin cambios) */}
                 <div className="bg-gray-50 dark:bg-neutral-900 p-6 rounded-xl border border-gray-200 dark:border-neutral-700">
                     <h3 className="font-semibold text-lg mb-4 dark:text-white">Resumen</h3>
                     <div className="space-y-3">

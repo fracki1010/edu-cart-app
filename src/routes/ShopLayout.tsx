@@ -5,7 +5,6 @@ import { Navigation } from "../components/layout/Navigation";
 import { Footer } from "../components/layout/Footer";
 
 export const ShopLayout = () => {
-    // Este layout NO verifica token, es público para visitantes
     return (
         <div className="flex flex-col min-h-screen">
             <Header />

@@ -3,7 +3,6 @@ import { useForm } from '@tanstack/react-form';
 import { useCreateProduct } from '../hooks/useCreateProduct'; // Ajusta la ruta
 import { useCategories } from '../hooks/useCategory';
 
-// Define el tipo de datos esperado del formulario
 type ProductCreateForm = {
     name: string;
     price: number;
@@ -11,10 +10,12 @@ type ProductCreateForm = {
     rating: number;
     image_url: string;
     category_id: number;
+    stock_current: 0,
+    stock_min: 0
 };
 
 interface ProductCreateProps {
-    onClose: () => void; // Función para cerrar el modal o redireccionar
+    onClose: () => void;
 }
 
 export const ProductCreate = ({ onClose }: ProductCreateProps) => {
@@ -22,19 +23,17 @@ export const ProductCreate = ({ onClose }: ProductCreateProps) => {
     const createProductMutation = useCreateProduct();
     const { data: categories } = useCategories();
 
-    // INICIALIZACIÓN DE TANSTACK FORM
     const form = useForm({
-        // 1. Valores iniciales: todos vacíos o con valores predeterminados
         defaultValues: {
             name: '',
             price: 0,
             description: '',
             rating: 0,
             category_id: 0,
-            image_url: '',
-        } as ProductCreateForm, // Forzamos el tipo inicial para que coincida con el formulario
+            image_url: ''
+        } as ProductCreateForm,
 
-        // 2. FUNCIÓN DE VALIDACIÓN MANUAL (sin Zod)
+
         validators: {
             onSubmit: (values) => {
                 const errors: Partial<Record<keyof ProductCreateForm, string[]>> = {};
@@ -55,19 +54,15 @@ export const ProductCreate = ({ onClose }: ProductCreateProps) => {
             },
         },
 
-        // 3. Función al enviar
         onSubmit: async ({ value }) => {
-            console.log(value);
 
             try {
 
-                // Llama a la función mutate de useMutation
                 await createProductMutation.mutateAsync({
                     ...value,
                     category_id: value.category_id,
                 });
 
-                // Cierra el modal/navega después de la creación exitosa
                 onClose();
 
             } catch (error) {

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../Auth/hooks/useAuth";
 import { useCart } from "../../Cart/hooks/useCart";
-import type { IProduct } from "../types/Product";
-import { FiDelete } from "react-icons/fi";
+import type { IProduct } from "../types/Product";;
 import { FaCartPlus } from "react-icons/fa6";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { Modal } from "../../../components/layout/Modal";
@@ -19,18 +18,15 @@ interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
 
   const navigator = useNavigate();
-  const [addLoading, setAddLoading] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { addItem } = useCart();
+  const { addItem, loading } = useCart();
   const { user } = useAuth();
 
 
   const addProductToCart = async () => {
-    // Simplemente pasas el objeto producto completo
     addItem(product, 1);
-
   };
 
   return (
@@ -110,14 +106,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             }
             <div className="w-full flex gap-2">
               <Button
-                isLoading={addLoading}
+                isLoading={loading}
                 spinner={
                   <Spinner size="sm" variant="wave" color="white" />
                 }
                 className="flex-1 text-gray-50"
                 onPress={() => navigator(`/products/${product.id}`)}
-                color={addLoading ? "success" : "secondary"}>
-                {addLoading ? "Adding..." : "Show Details"}
+                color={loading ? "success" : "secondary"}>
+                {loading ? "Adding..." : "Show Details"}
               </Button>
               <Button
                 isIconOnly
@@ -128,13 +124,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 <FaCartPlus />
               </Button>
             </div>
-            {/* <button
-              disabled={user?.role === "ADMIN"}
-              onClick={() => addProductToCart()}
-              className={`w-full text-white py-2 rounded-md ${addLoading ? "bg-green-600" : " bg-indigo-600 dark:bg-indigo-500  hover:bg-indigo-700 dark:hover:bg-indigo-400"} transition-colors`}
-            >
-              {addLoading ? "Adding..." : "Add to Cart"}
-            </button> */}
           </div>
         </div>
       </div>
@@ -143,7 +132,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           product={product}
           onClose={() => setIsEditModalOpen(false)}
           onSave={(updatedProduct) => {
-            // Aquí puedes manejar la actualización del producto, por ejemplo, llamar a una API o actualizar el estado global;
             setIsEditModalOpen(false);
           }}
         />

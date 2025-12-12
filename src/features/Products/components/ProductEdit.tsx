@@ -4,14 +4,12 @@ import type { IProduct } from '../types/Product';
 import { useUpdateProduct } from '../hooks/useUpdateProduct';
 import { useCategories } from '../hooks/useCategory';
 
-// Define el tipo de datos esperado del formulario
 type ProductEditForm = {
     name: string;
     price: number;
     category: string;
 };
 
-// Define las props para el componente
 interface ProductEditProps {
     product: IProduct;
     onClose: () => void;
@@ -36,21 +34,17 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
 
 
         validators: {
-            // Función de validación manual
             onSubmit: (values) => {
                 const errors: Partial<Record<keyof ProductEditForm, string[]>> = {};
 
-                // Validación del Nombre
                 if (values.value.name.length < 3) {
                     errors.name = ['El nombre debe tener al menos 3 caracteres.'];
                 }
 
-                // Validación del Precio
                 if (values.value.price <= 0 || isNaN(values.value.price)) {
                     errors.price = ['El precio debe ser un número positivo.'];
                 }
 
-                // Validación de la Categoría
                 if (values.value.category.length === 0 || values.value.category === "Seleccione una...") {
                     errors.category = ['Debe seleccionar una categoría.'];
                 }
@@ -59,14 +53,11 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
             },
             onSubmitAsync: async ({ value }) => {
                 try {
-                    // Llama a la función mutate de useMutation
                     await updateProductMutation.mutateAsync({
                         id: product.id,
-                        ...value // name, price, category
+                        ...value
                     });
 
-                    // Si la mutación es exitosa, construir el objeto IProduct con id
-                    // y mapear image_url -> imageUrl antes de llamar a onSave
                     const updatedProduct = {
                         id: product.id,
                         name: (value as any).name,
@@ -77,25 +68,16 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                         category: (value as any).category,
                     } as IProduct;
 
-                    onSave(updatedProduct); // Llama a la función de guardado con IProduct
+                    onSave(updatedProduct);
                     onClose();
 
                 } catch (error) {
-                    // El error ya es manejado por useMutation (onError), pero puedes
-                    // agregar lógica de notificación de usuario aquí.
+
                     console.error("Falló el guardado del formulario:", error);
                 }
             },
         },
 
-        // // Función al enviar
-        // onSubmit: async ({ value }) => {
-
-        //     await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        //     onSave(value as IProduct);
-        //     onClose();
-        // },
     });
 
 
@@ -109,7 +91,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
             className="space-y-4 overflow-auto p-4 max-h-[70vh]"
         >
 
-            {/* 1. Campo Nombre */}
             <form.Field
                 name="name"
                 children={(field) => (
@@ -133,7 +114,7 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* Campo Descripcion */}
+
             <form.Field
                 name="description"
                 children={(field) => (
@@ -157,7 +138,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* Campo Rating */}
             <form.Field
                 name="rating"
                 children={(field) => (
@@ -185,7 +165,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* Campo Imagen URL */}
             <form.Field
                 name="image_url"
                 children={(field) => (
@@ -209,7 +188,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* 2. Campo Precio */}
             <form.Field
                 name="price"
                 children={(field) => (
@@ -221,7 +199,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                             id={field.name}
                             name={field.name}
                             type="number"
-                            // Usamos .toString() para el input si es un number en el estado
                             value={field.state.value}
                             onBlur={field.handleBlur}
                             // Convertimos el valor a float al cambiar el campo
@@ -238,7 +215,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* 3. Campo Categoría (Select) */}
             <form.Field
                 name="category"
                 children={(field) => (
@@ -269,7 +245,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 )}
             />
 
-            {/* Botones de Acción */}
             <div className="pt-4 flex justify-end space-x-3">
                 <button
                     type="button"
@@ -281,7 +256,6 @@ export const ProductEdit = ({ product, onClose, onSave }: ProductEditProps) => {
                 </button>
 
                 <form.Subscribe
-                    // Suscribe solo a los estados necesarios para el botón
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
                         <button

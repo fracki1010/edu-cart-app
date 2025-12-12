@@ -40,8 +40,6 @@ const authSlice = createSlice({
     ) => {
       state.loading = false;
       state.user = action.payload.user;
-      console.log(action.payload.user);
-
       state.token = action.payload.token;
 
 
@@ -59,16 +57,13 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
 
-      // Eliminar de localStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     },
 
     updateUser: (state, action: PayloadAction<any>) => {
-      // Actualizamos solo los datos del usuario, manteniendo el token
       state.user = { ...state.user, ...action.payload };
 
-      //Actualizar el localStorange      
       localStorage.removeItem("user");
       localStorage.setItem("user", JSON.stringify(state.user));
     },

@@ -6,25 +6,20 @@ import { useAuth } from "../hooks/useAuth";
 import { LoadingComponent } from "../../../components/layout/LoadingComponent";
 
 export const LoginPage = () => {
-  // 1. Extraemos 'user' además del token para saber su rol
+
   const { login, loading, error, token, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Solo actuamos si el login fue exitoso (tenemos token y datos de usuario)
     if (token && user) {
 
-      // CASO A: El usuario fue interceptado (ej: iba al Checkout y lo mandaron al login)
-      // Debemos devolverlo a donde quería ir, sea quien sea.
       const from = location.state?.from?.pathname;
       if (from) {
         navigate(from, { replace: true });
         return;
       }
 
-      // CASO B: Login directo (Entró a /login por voluntad propia)
-      // Aquí decidimos según el rol:
       if (user.role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
@@ -35,7 +30,7 @@ export const LoginPage = () => {
 
   const handleLogin = async (data: Record<string, string>) => {
     await login(data.username, data.password);
-    // No navegamos aquí manualment; dejamos que el useEffect reaccione al cambio de 'token' y 'user'
+
   };
 
   if (loading) {

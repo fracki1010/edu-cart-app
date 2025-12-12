@@ -1,4 +1,3 @@
-// src/features/products/views/ProductDetailPage.tsx
 import React, { useState } from "react";
 import {
     Button,
@@ -34,10 +33,8 @@ export const ProductDetailPage: React.FC = () => {
     const { data: product, isLoading, isError } = useProduct(productId);
     const [quantity, setQuantity] = useState(1);
 
-    // Fallback seguro de stock
     const currentStock = (product as any)?.stock ?? DEFAULT_STOCK_MOCK;
 
-    // --- Loading State con Skeletons (Más elegante) ---
     if (isLoading) return (
         <div className="container mx-auto px-4 py-8 max-w-6xl h-screen">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -72,7 +69,6 @@ export const ProductDetailPage: React.FC = () => {
         </div>
     );
 
-    // --- Lógica de Negocio ---
     const isOutOfStock = currentStock === 0;
     const isLowStock = currentStock > 0 && currentStock <= 5;
 
@@ -87,7 +83,7 @@ export const ProductDetailPage: React.FC = () => {
 
     const handleAddToCart = () => {
         if (isOutOfStock) return;
-        addItem(product, quantity); // Asumiendo que addItem maneja (product, quantity)
+        addItem(product, quantity);
     };
 
     return (

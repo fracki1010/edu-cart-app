@@ -6,6 +6,7 @@ export function useProducts(filters?: {
   categories?: string[];
   price_min?: number;
   price_max?: number;
+  sort?: string;
 }) {
   return useQuery<IProduct[], Error>({
     queryKey: ["products", filters],

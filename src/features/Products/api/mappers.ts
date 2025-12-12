@@ -12,7 +12,7 @@ export interface ProductApi {
   price: number;
   rating: number;
   image_url?: string;
-  category: { id: number; name: string } | null; // objeto único, no array
+  category: { id: number; name: string } | null;
   stock_current: number;
   stock_min: number;
   sku?: string;
@@ -27,7 +27,6 @@ export function toProduct(api: ProductApi): IProduct {
     rating: api.rating,
     imageUrl: api.image_url,
     category: api.category?.name || "Sin categoría",
-    // Mapeo de inventario
     stock: api.stock_current,
     stock_min: api.stock_min,
     sku: api.sku,

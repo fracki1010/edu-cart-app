@@ -7,7 +7,7 @@ import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { FaUser, FaEnvelope, FaLock, FaKey } from "react-icons/fa6";
 
-// 1. Esquema Zod (Separado para reusar lógica)
+
 const profileSchema = z.object({
   name: z.string().min(3, "El nombre es muy corto"),
   email: z.string().email("Correo inválido"),
@@ -47,12 +47,12 @@ interface EditProfileModalProps {
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   isOpen, onClose, user, onSubmit, isLoading
 }) => {
-  // Estado local para animación visual del switch (TanStack Form maneja el valor lógico)
+  // Estado local para animación visual del switch
   const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   // Helper de validación manual (Igual que en ProductForm)
   const validate = (field: keyof ProfileFormValues, value: any, allValues: ProfileFormValues) => {
-    // Para validaciones complejas (superRefine), validamos todo el objeto
+    // Para validaciones complejas
     const result = profileSchema.safeParse({ ...allValues, [field]: value });
 
     if (!result.success) {
@@ -73,7 +73,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       confirmPassword: "",
     },
     onSubmit: async ({ value }: { value: ProfileFormValues }) => {
-      // Limpieza de datos antes de enviar
       const payload: any = {
         name: value.name,
         email: value.email,
@@ -180,9 +179,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                       isSelected={field.state.value}
                       onValueChange={(val) => {
                         field.handleChange(val);
-                        setShowPasswordFields(val); // Sincronizamos estado visual
+                        setShowPasswordFields(val);
                         if (!val) {
-                          // Limpiar campos si desactiva
                           form.setFieldValue("password", "");
                           form.setFieldValue("confirmPassword", "");
                         }

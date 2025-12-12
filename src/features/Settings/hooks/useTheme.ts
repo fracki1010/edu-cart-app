@@ -1,33 +1,30 @@
 import { useState, useEffect } from 'react';
 
-// 1. Define los tipos de tema
 type Theme = 'light' | 'dark' | 'system';
 type SetTheme = React.Dispatch<React.SetStateAction<Theme>>;
 
 // Función auxiliar para obtener la preferencia de color del sistema
-const getSystemPreference = (): 'dark' | 'light' => 
+const getSystemPreference = (): 'dark' | 'light' =>
   window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
 export const useTheme = (): [Theme, SetTheme] => {
-  
-  // 2. Inicializa el tema: Usa localStorage, si no, usa 'system' como fallback.
+
+  // Inicializa el tema: Usa localStorage, si no, usa 'system' como fallback.
   const [theme, setTheme] = useState<Theme>(() => {
-    // Aseguramos que el valor de localStorage sea uno de nuestros tipos de tema válidos
     const savedTheme = localStorage.getItem('theme') as Theme | null;
-    
+
     // Si hay un valor guardado y es válido, úsalo. Si no, usa 'system' por defecto.
     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-        return savedTheme;
+      return savedTheme;
     }
     return 'system';
   });
 
-  // 3. Efecto para aplicar la clase 'dark' y guardar en localStorage.
+
   useEffect(() => {
     const root = window.document.documentElement;
     const isSystemDark = getSystemPreference() === 'dark';
-    
-    // Determina si se debe aplicar la clase 'dark'
+
     const shouldApplyDark = theme === 'dark' || (theme === 'system' && isSystemDark);
 
     // Limpia cualquier clase anterior y aplica la nueva
@@ -37,26 +34,23 @@ export const useTheme = (): [Theme, SetTheme] => {
       root.classList.add('dark');
     }
 
-    // Guarda la selección del usuario en localStorage
     localStorage.setItem('theme', theme);
 
-  }, [theme]); 
+  }, [theme]);
 
-  // 4. Manejar cambios en la preferencia del sistema cuando el tema es 'system'
+  // Manejar cambios en la preferencia del sistema cuando el tema es 'system'
   useEffect(() => {
     if (theme === 'system') {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        // Define el manejador de cambios
-        const handleChange = () => {
-             // Forzamos una re-evaluación del tema sin cambiar el valor de 'theme' (que sigue siendo 'system')
-             setTheme('system'); 
-        };
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
+      const handleChange = () => {
+        setTheme('system');
+      };
+
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, [theme]);
 
-  return [theme, setTheme]; 
+  return [theme, setTheme];
 };

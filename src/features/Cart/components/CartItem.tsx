@@ -1,11 +1,10 @@
 // src/features/Cart/components/CartItem.tsx
 import React from "react";
-import { Link } from "react-router";
 import { useCart } from "../hooks/useCart";
 
 interface CartItemData {
   cartId?: number;
-  productId: number; // Asegúrate de usar productId para ser consistente
+  productId: number;
   name: string;
   price: number;
   quantity: number;
@@ -20,15 +19,11 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const itemTotal = (item.price * item.quantity).toFixed(2);
   const { removeItem, updateItem } = useCart();
 
-  // --- CORRECCIÓN AQUÍ ---
   const handleQuantityChange = (delta: number) => {
     const newQuantity = item.quantity + delta;
 
-    // Validación básica
     if (newQuantity < 1) return;
 
-    // ERROR ANTERIOR: updateItem({ product_id: ..., quantity: ... }) 
-    // FORMA CORRECTA: updateItem(ID, CANTIDAD)
     updateItem(item.productId, newQuantity);
   };
 
@@ -57,7 +52,6 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
         ${item.price.toFixed(2)}
       </div>
 
-      {/* Controles de Cantidad */}
       <div className="flex items-center border border-gray-300 dark:border-neutral-600 rounded-md">
         <button
           onClick={() => handleQuantityChange(-1)}

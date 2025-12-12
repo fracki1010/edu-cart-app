@@ -2,7 +2,6 @@ export interface IOrderItem {
     productId: number;
     quantity: number;
     price: number;
-    // Objeto anidado del producto
     product: {
         id: number;
         name: string;
@@ -13,14 +12,15 @@ export interface IOrderItem {
 export interface IOrder {
     id: number;
     userId: number;
-    orderDate: string; // Mapeado de order_date
+    orderDate: string;
     status: string;
-    shippingAddress: string; // Mapeado de shipping_address
-    total: number; // Mapeado de total_amount
+    shippingAddress: string;
+    locality: string;
+    total: number;
     items: IOrderItem[];
 }
 
-// Interfaces para la respuesta "cruda" del API (Snake Case)
+
 export interface OrderItemApi {
     product_id: number;
     quantity: number;
@@ -38,10 +38,12 @@ export interface OrderApi {
     order_date: string;
     status: string;
     shipping_address: string;
+    locality: string;
     total_amount: number;
     items: OrderItemApi[];
 }
 
 export interface CreateOrderPayload {
     shipping_address: string;
+    locality: string;
 }

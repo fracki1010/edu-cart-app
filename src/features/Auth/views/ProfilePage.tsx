@@ -21,7 +21,6 @@ import { EditProfileModal } from "../components/EditProfileModal";
 
 export const ProfilePage = () => {
     const { user, logoutUser, updateUserState, loading } = useAuth();
-    // const { mutateAsync: updateProfile, isPending } = useProfile();
 
     const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -30,16 +29,15 @@ export const ProfilePage = () => {
             updateUserState(data);
             console.log(data);
 
-            setIsEditOpen(false); // Cerramos solo si tuvo éxito
+            setIsEditOpen(false);
         } catch (error) {
             console.error(error);
         }
     };
 
-
     if (!user) return null;
 
-    // Lógica de rol para mostrar un Chip bonito
+
     const isAdmin = user.role === "admin";
 
     return (

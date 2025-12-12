@@ -20,6 +20,7 @@ export function toOrder(api: OrderApi): IOrder {
         orderDate: api.order_date,
         status: api.status,
         shippingAddress: api.shipping_address,
+        locality: api.locality,
         total: api.total_amount,
         items: api.items.map(toOrderItem),
     };

@@ -1,14 +1,12 @@
-// src/features/Cart/hooks/useCart.ts
+
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-// Importamos tus acciones de Redux (asegúrate que existan en tu slice)
+
 import {
   cartStart,
   cartSuccess,
   cartFailure,
-  cartRemoveItem,
-  clearCartState,
 } from "../redux/cartSlice";
 // Importamos tu API existente
 import {
@@ -17,7 +15,7 @@ import {
   updateItemQuantity as updateItemApi,
   removeItemFromCart as removeItemApi,
   clearCart as clearCartApi,
-} from "../services/apiCart"; // Asumiendo que renombraste el archivo o la importación
+} from "../services/apiCart";
 import type { IProduct } from "../../Products/types/Product";
 import type { ICartItem } from "../types/Cart";
 
@@ -27,14 +25,13 @@ const GUEST_CART_KEY = "educart_guest_cart";
 export function useCart() {
   const dispatch = useDispatch();
 
-  // Obtenemos datos del usuario y del carrito desde Redux
   const { user, token } = useSelector((state: RootState) => state.auth);
   const { items, total, loading, error } = useSelector((state: RootState) => state.cart);
 
   const fetchCart = useCallback(async () => {
     dispatch(cartStart());
 
-    // --- ESCENARIO A: MODO INVITADO (Leer de LocalStorage) ---
+    // MODO INVITADO (Leer de LocalStorage)
     if (!user || !token) {
       const storedCart = localStorage.getItem(GUEST_CART_KEY);
       const guestItems: ICartItem[] = storedCart ? JSON.parse(storedCart) : [];
@@ -50,9 +47,8 @@ export function useCart() {
       return;
     }
 
-    // --- ESCENARIO B: MODO CLIENTE (API) ---
+    // MODO CLIENTE (API)
     try {
-      // ===> LÓGICA DE SINCRONIZACIÓN <===
       // Antes de pedir el carrito a la API, revisamos si hay algo "pendiente" en local
       const localCartJson = localStorage.getItem(GUEST_CART_KEY);
 
@@ -70,13 +66,10 @@ export function useCart() {
           ));
         }
 
-        // Una vez subido, borramos el carrito local para no duplicar en el futuro
+        //  Borramos el carrito local para no duplicar en el futuro
         localStorage.removeItem(GUEST_CART_KEY);
       }
 
-      // ===> FIN SINCRONIZACIÓN <===
-
-      // Ahora sí, pedimos la "Verdad" al backend (que ya tendrá los items sumados)
       const data = await getCartApi();
 
       // Mapeo de respuesta API a estructura Redux
@@ -102,16 +95,16 @@ export function useCart() {
       console.error(err);
       dispatch(cartFailure("Error al cargar el carrito del servidor"));
     }
-  }, [user, token, dispatch]); // Dependencias críticas
+  }, [user, token, dispatch]);
 
-  // --- Helper para guardar en localStorage (Solo Invitados) ---
+  // Helper para guardar en localStorage (Solo Invitados)
   const saveLocalCart = (newItems: ICartItem[]) => {
     localStorage.setItem(GUEST_CART_KEY, JSON.stringify(newItems));
     const newTotal = newItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     dispatch(cartSuccess({ items: newItems, total: newTotal, id: 0, userId: 0 }));
   };
 
-  // --- 2. AGREGAR ITEM (Add) ---
+  // AGREGAR ITEM 
   const addItem = async (product: IProduct, quantity: number = 1) => {
     dispatch(cartStart());
 
@@ -128,7 +121,7 @@ export function useCart() {
             : i
         );
       } else {
-        // Si es nuevo, lo creamos. IMPORTANTE: Mapear IProduct a ICartItem
+        // Si es nuevo, lo creamos
         const newItem: ICartItem = {
           cartId: 0,
           productId: product.id,
@@ -145,26 +138,24 @@ export function useCart() {
 
     // MODO CLIENTE (API)
     try {
-      // Tu API requiere userId, productId, quantity
+
       await addItemApi(product.id, quantity);
-      // Recargamos el carrito desde el servidor para tener la info fresca
       await fetchCart();
     } catch (err) {
       dispatch(cartFailure("Error al agregar producto"));
     }
   };
 
-  // --- 3. ACTUALIZAR CANTIDAD (Update) ---
+
   const updateItem = async (productId: number, quantity: number) => {
     dispatch(cartStart());
 
     // MODO INVITADO
     if (!user) {
-      console.log("Actualizando local:", productId, quantity); // DEBUG
+      console.log("Actualizando local:", productId, quantity);
 
-      // Usamos map para crear un NUEVO array (inmutabilidad)
       const newItems = items.map((i) => {
-        // Aseguramos que la comparación sea segura (ambos a String o ambos Number)
+
         if (Number(i.productId) === Number(productId)) {
           return { ...i, quantity: quantity };
         }
@@ -184,7 +175,7 @@ export function useCart() {
     }
   };
 
-  // --- 4. ELIMINAR ITEM (Remove) ---
+
   const removeItem = async (productId: number) => {
     dispatch(cartStart());
 
@@ -197,15 +188,6 @@ export function useCart() {
 
     // MODO CLIENTE
     try {
-      // OJO: Tu API removeItemFromCart pide (userId, itemId).
-      // A veces el itemId es el ID de la fila en la tabla intermedia, no el productId.
-      // Si tu backend usa productId para borrar, está bien. Si usa un ID de relación,
-      // necesitas buscar ese ID en 'items' primero.
-
-      // Asumiendo que tu backend es inteligente y acepta productId O buscas el item correcto:
-      // const cartItem = items.find(i => i.productId === productId);
-      // if (!cartItem) return;
-
       await removeItemApi(productId); // O cartItem.id si fuera necesario
       await fetchCart();
     } catch (err) {
@@ -213,7 +195,8 @@ export function useCart() {
     }
   };
 
-  // --- 5. VACIAR CARRITO (Para después de comprar) ---
+
+
   const emptyCart = async () => {
     dispatch(cartStart());
 
@@ -224,23 +207,18 @@ export function useCart() {
       return;
     }
 
-    // Si es cliente, no tenemos endpoint de "vaciar todo" en la API que me pasaste,
-    // pero podemos limpiar el estado local y asumir que al comprar se vacía en backend (lógica de orden)
-    // O si tu API tuviera endpoint DELETE /cart, lo usaríamos aquí.
-
-    // Para efectos de UI inmediata:
+    // Si es cliente
     dispatch(cartSuccess({ items: [], total: 0, id: 0, userId: user.id }));
   };
 
-  // EFECTO PRINCIPAL: Se dispara al cambiar el usuario (Login/Logout)
   useEffect(() => {
     fetchCart();
-  }, [fetchCart]); // fetchCart ya depende de [user] gracias al useCallback
+  }, [fetchCart]);
 
-  // Efecto para cargar el carrito al iniciar o cambiar de usuario
+
   useEffect(() => {
     fetchCart();
-  }, [user, token]); // Se ejecuta cuando cambia el usuario (login/logout)
+  }, [user, token]);
 
   return {
     items,

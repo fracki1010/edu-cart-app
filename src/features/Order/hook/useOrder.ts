@@ -6,16 +6,16 @@ import type { CreateOrderPayload } from "../types/Order";
 import { useToast } from "@/components/ui/ToastProvider";
 import { apiClient } from "@/services/apiClient";
 
-// Hook para OBTENER historial
+
 export const useMyOrders = () => {
     return useQuery({
         queryKey: ["my-orders"],
         queryFn: orderService.getMyOrders,
-        staleTime: 1000 * 60 * 5, // 5 minutos fresca
+        staleTime: 1000 * 60 * 5, // 5 minutos
     });
 };
 
-// Hook para CREAR orden
+
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -24,13 +24,13 @@ export const useCreateOrder = () => {
     return useMutation({
         mutationFn: (payload: CreateOrderPayload) => orderService.create(payload),
         onSuccess: async () => {
-            // 1. Vaciar carrito local/redux
+            // Vaciar carrito
             await emptyCart();
 
-            // 2. Invalidar caché para que se recargue la lista de órdenes
+            // Invalidar caché para que se recargue la lista de órdenes
             queryClient.invalidateQueries({ queryKey: ["my-orders"] });
 
-            // 3. Redirigir
+            // Redirigir
             navigate("/my-orders");
         },
         onError: (error: any) => {
@@ -50,7 +50,7 @@ export const useUpdateOrderStatus = () => {
             return res.data;
         },
         onSuccess: () => {
-            // Recargamos la lista de órdenes para ver el cambio de estado
+
             queryClient.invalidateQueries({ queryKey: ["my-orders"] });
             addToast("¡Gracias por confirmar la entrega!", "success");
         },

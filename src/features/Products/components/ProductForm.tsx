@@ -11,9 +11,9 @@ import {
     ModalFooter,
     ModalBody
 } from "@heroui/react";
-import { useCategories } from "../../Products/hooks/useCategories";
+import { useCategories } from "../../Products/hooks/useCategory";
 
-// 1. Esquema de Validación con Zod
+
 const productSchema = z.object({
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     description: z.string().min(10, "La descripción es muy corta"),
@@ -39,7 +39,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
     const { data: categories = [] } = useCategories();
 
-    // 2. Hook de TanStack Form
+    // TanStack Form
     const form = useForm({
         defaultValues: {
             name: initialData?.name || "",
@@ -51,7 +51,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             category_id: initialData?.category_id?.toString() || "",
             image_url: initialData?.imageUrl || "",
         } as ProductFormValues,
-        validatorAdapter: zodValidator(),
+        // validatorAdapter: zodValidator(),
         validators: {
             onChange: productSchema,
         },
@@ -71,7 +71,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             className="flex flex-col gap-4"
         >
             <ModalBody className="gap-4">
-                {/* Campo Nombre */}
+
                 <form.Field
                     name="name"
                     children={(field) => (
@@ -164,7 +164,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             variant="bordered"
                         >
                             {categories.map((cat) => (
-                                <SelectItem key={cat.id} value={cat.id.toString()}>
+                                <SelectItem key={cat.id} textValue={cat.id.toString()}>
                                     {cat.name}
                                 </SelectItem>
                             ))}

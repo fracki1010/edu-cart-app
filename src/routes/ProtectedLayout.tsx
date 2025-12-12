@@ -8,11 +8,9 @@ import { Footer } from "../components/layout/Footer";
 
 export const ProtectedLayout = () => {
   const token = useSelector((state: RootState) => state.auth.token);
-  const location = useLocation(); // Obtenemos la ubicación actual (ej: /checkout)
+  const location = useLocation();
 
   if (!token) {
-    // Redirigimos al login, pero enviamos el estado "from"
-    // para saber a dónde volver después de loguearse.
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -22,7 +20,7 @@ export const ProtectedLayout = () => {
       <Navigation />
 
       <main className="flex-1 p-4 bg-gray-50 dark:bg-neutral-900">
-        <Outlet /> {/* Renderiza las páginas hijas */}
+        <Outlet />
       </main>
 
       <Footer />

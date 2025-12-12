@@ -1,27 +1,22 @@
-import React from 'react';
-import { useDeleteProduct } from '../hooks/useDeleteProduct'; // Ajusta la ruta
+import { useDeleteProduct } from '../hooks/useDeleteProduct';
 
 interface ProductConfirmDeleteProps {
     productId: number;
     productName: string;
-    onClose: () => void; // Función para cerrar el modal
+    onClose: () => void;
 }
 
 export const ProductConfirmDelete = ({ productId, productName, onClose }: ProductConfirmDeleteProps) => {
 
-    // Usamos el hook de mutación de borrado
     const deleteMutation = useDeleteProduct();
 
     const handleDelete = async () => {
         try {
-            // 1. Ejecuta la mutación de borrado
+            // Ejecuta la mutación de borrado
             await deleteMutation.mutateAsync(productId);
-
-            // 2. Cierra el modal después de que la mutación sea exitosa
             onClose();
 
         } catch (error) {
-            // El error se maneja en el hook (onError), pero puedes añadir aquí notificaciones al usuario
             console.error("No se pudo eliminar el producto:", error);
         }
     };
@@ -33,7 +28,7 @@ export const ProductConfirmDelete = ({ productId, productName, onClose }: Produc
                 Esta acción es irreversible.
             </p>
 
-            {/* Mensaje de Error (si ocurre un fallo en la API) */}
+
             {deleteMutation.isError && (
                 <div className="p-3 bg-red-100 border-l-4 border-red-500 text-red-700 dark:bg-red-900 dark:border-red-600 dark:text-red-300 rounded">
                     <p className="font-bold">Error al eliminar</p>
@@ -41,7 +36,6 @@ export const ProductConfirmDelete = ({ productId, productName, onClose }: Produc
                 </div>
             )}
 
-            {/* Botones de Acción */}
             <div className="pt-4 flex justify-end space-x-3">
                 <button
                     type="button"

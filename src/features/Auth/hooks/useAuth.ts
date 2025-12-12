@@ -16,6 +16,7 @@ export const useAuth = () => {
     (state: RootState) => state.auth
   );
 
+  //Login
   const login = async (username: string, password: string) => {
     try {
       dispatch(loginStart());
@@ -63,7 +64,6 @@ export const useAuth = () => {
         password,
       });
 
-      //una vez registrado
       login(res.data.username, password);
     } catch (err: any) {
       console.error(err);
@@ -74,22 +74,11 @@ export const useAuth = () => {
 
   const updateUserState = async (updatedUserData: any) => {
     try {
-
       dispatch(loginStart())
-
-      console.log(updatedUserData);
-
 
       const response = await apiClient.patch("/auth/me", {
         ...updatedUserData
       });
-
-
-      console.log(response.data);
-
-
-      //convertimos para el slice
-      // const user = { id: id, username: usernameData, name: nameData, role: role, email: email };
 
 
       // Guardar en Redux + localStorage;

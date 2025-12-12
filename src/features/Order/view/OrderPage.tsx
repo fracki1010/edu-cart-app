@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa6";
 import { OrderItemRow } from "../components/OrderItemRow";
 
-// --- Helpers de Formato ---
+
 const getStatusConfig = (status: string) => {
     const s = status.toLowerCase();
     switch (s) {
@@ -56,7 +56,7 @@ export const OrderPage: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl min-h-screen">
 
-            {/* Header */}
+
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
@@ -125,28 +125,33 @@ export const OrderPage: React.FC = () => {
                                     </div>
                                 }
                             >
-                                {/* Contenido Desplegable */}
+
                                 <div className="pt-2 pb-4">
 
-                                    {/* Tarjeta de Dirección */}
+
                                     <div className="flex items-start gap-3 p-3 mb-4 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-100 dark:border-neutral-800">
                                         <div className="p-2 bg-white dark:bg-neutral-800 rounded-full shadow-sm text-gray-500">
                                             <FaTruckFast />
                                         </div>
-                                        <div className='flex-1'> {/* Añadimos flex-1 para que este div ocupe el espacio disponible y empuje el botón */}
+                                        <div className='flex-1'>
                                             <p className="text-xs font-bold text-gray-500 uppercase">Envío a domicilio</p>
                                             <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                                                 {order.shippingAddress}
                                             </p>
+                                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                {order.locality}
+                                            </p>
+
                                         </div>
+
                                         {order.status === "Completed" ? (
-                                            // Si ya llegó, mostramos un indicador visual bonito
+
                                             <div className="ml-auto flex items-center gap-1 text-success font-medium text-sm border border-success-200 bg-success-50 px-3 py-1 rounded-full">
                                                 <FaCheck />
                                                 <span>Entregado</span>
                                             </div>
                                         ) : (
-                                            // Si está pendiente, mostramos el botón de acción
+
                                             <Button
                                                 className="ml-auto"
                                                 color="success"
@@ -162,7 +167,7 @@ export const OrderPage: React.FC = () => {
 
                                     <Divider className="my-4 opacity-50" />
 
-                                    {/* Lista de Items */}
+
                                     <div className="space-y-1">
                                         {order.items.map((item, idx) => (
                                             <OrderItemRow key={`${order.id}-${idx}`} item={item} />
@@ -171,7 +176,7 @@ export const OrderPage: React.FC = () => {
 
                                     <Divider className="my-4 opacity-50" />
 
-                                    {/* Footer Total */}
+
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm text-gray-500">Total pagado</span>
                                         <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">

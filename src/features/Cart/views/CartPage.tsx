@@ -74,7 +74,6 @@ export const CartPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Resumen */}
         <div className="lg:w-1/3">
           <CartSummary
             subtotal={subtotal}

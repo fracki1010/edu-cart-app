@@ -11,7 +11,8 @@ export const productService = {
     categories?: string[];
     price_min?: number;
     price_max?: number;
-  }): Promise<IProduct[]> => {
+    sort?: string;
+  }) => {
     return await productApi.getProducts(filters);
   },
   getById: async (id: number): Promise<IProduct> => {

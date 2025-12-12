@@ -1,17 +1,15 @@
 // src/routes/AppRouter.tsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import { ProductsPage } from "../features/Products/views/ProductsPage";
-import { ProductDetailPage } from "../features/Products/views/ProductDetailPage"; // Asegúrate de tener este import
+import { ProductDetailPage } from "../features/Products/views/ProductDetailPage";
 import { CartPage } from "../features/Cart/views/CartPage";
 import { LoginPage } from "../features/Auth/views/LoginPage";
 import { RegisterPage } from "../features/Auth/views/RegisterPage";
 import { Setting } from "../features/Settings/views/Settings";
 import { HomePage } from "../features/Home/views/HomePage";
-import { CheckoutPage } from "../features/Order/view/CheckoutPage"; // Asegúrate de tener este import
-
-// Layouts
+import { CheckoutPage } from "../features/Order/view/CheckoutPage";
 import { ProtectedLayout } from "./ProtectedLayout";
-import { ShopLayout } from "./ShopLayout"; // Layout público (Header + Footer)
+import { ShopLayout } from "./ShopLayout";
 import { OrderPage } from "@/features/Order/view/OrderPage";
 import { AdminGuard } from "./AdminGuard";
 import { AdminDashboard } from "@/features/Admin/views/AdminDashboard";
@@ -28,7 +26,6 @@ export const AppRouter = () => {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* 2. RUTAS DE LA TIENDA (Públicas abiertas - Visitantes y Clientes) */}
-        {/* Usamos ShopLayout para que tengan Header y Footer pero sin protección */}
         <Route element={<ShopLayout />}>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
@@ -38,7 +35,6 @@ export const AppRouter = () => {
         </Route>
 
         {/* 3. RUTAS PROTEGIDAS (Solo Clientes Autenticados) */}
-        {/* Si entras aquí sin login, ProtectedLayout te manda a login y luego te regresa */}
         <Route element={<ProtectedLayout />}>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<Setting />} />
@@ -46,7 +42,7 @@ export const AppRouter = () => {
           <Route path="/my-orders" element={<OrderPage />} />
 
 
-          {/* 🛡️ RUTAS SOLO ADMIN (RF-AUTH-03)  */}
+          {/* RUTAS SOLO ADMIN  */}
           <Route element={<AdminGuard />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/inventory" element={<InventoryPage />} />

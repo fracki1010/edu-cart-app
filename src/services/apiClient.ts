@@ -11,7 +11,6 @@ export const apiClient = axios.create({
   },
 });
 
-// Interceptor para adjuntar el token JWT
 apiClient.interceptors.request.use(
   (config) => {
     const token = store.getState().auth.token;
@@ -23,7 +22,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Manejo de expiración o 401
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
